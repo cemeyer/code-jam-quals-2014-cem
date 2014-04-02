@@ -10,18 +10,18 @@ target="${targetbin}.c"
 rm -f "$target" "$targetbin"
 
 for f in *.c ; do
-    while read line ; do
+    sed -e "s|\\\\n|\\\\\\\\n|" "$f" | while read line ; do
         if echo "$line" | egrep -q "^#include\s\s*\"[^\"]*\"$" ; then
             incfn="$(echo "$line" | sed -e "s|^#include\s\s*\"\([^\"]*\)\"$|\1|")"
             echo "/* $line */" >> "$target"
             cat "$incfn" >> "$target"
         else
-            echo "$line" >> "$target"
+            /usr/bin/echo -E "$line" >> "$target"
         fi
-    done < "$f"
+    done
 done
         
-cmd="gcc -Wall -Wextra -O3 -g -o ${targetbin} ${target}"
+cmd="gcc -std=gnu99 -Wall -Wextra -O3 -g -o ${targetbin} ${target}"
 echo "$cmd"
 zsh -c "$cmd" || die "$cmd: error"
 
@@ -31,7 +31,7 @@ for f in test*.in ; do
 
     tmpf="$(mktemp)"
 
-    "./${targetbin}" < "$f" > "$tmpf" || die "${targetbin}: error"
+    "./${targetbin}" < "$f" > "$tmpf" || die "${targetbin}: error during test"
 
     diff -u "$tmpf" "$texp"
     cmp --quiet "$tmpf" "$texp" || echo "$f failed"
