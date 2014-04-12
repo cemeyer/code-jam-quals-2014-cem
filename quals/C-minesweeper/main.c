@@ -235,9 +235,13 @@ do_case(unsigned cno, unsigned rows, unsigned cols, unsigned mines)
 		do_flat(cols, mines);
 	else if (cols == 1 && mines <= rows - 2)
 		do_tall(rows, mines);
-	else if (mines <= cols && rows > 2)
+	else if (mines == cols && rows > 2)
 		do_sparse(rows, cols, mines);
-	else if (mines <= rows && cols > 2)
+	else if (mines < cols - 1 && rows > 2)
+		do_sparse(rows, cols, mines);
+	else if (mines == rows && cols > 2)
+		do_sparse(rows, cols, mines);
+	else if (mines < rows - 1 && cols > 2)
 		do_sparse(rows, cols, mines);
 	else if (mines <= rows + cols - 1 && (rows > 2 && cols > 2))
 		do_sparse(rows, cols, mines);
