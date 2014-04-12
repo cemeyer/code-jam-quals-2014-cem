@@ -44,12 +44,10 @@ die(const char *fmt, ...)
 	(void) (&_min1 == &_min2);			\
 	_min1 < _min2 ? _min1 : _min2; })
 
-const double epsilon = 0.0000001;
-
 static int
 hand_compare(const void *a, const void *b)
 {
-	const double *pc1 = a, *pc2 = b;
+	const uint32_t *pc1 = a, *pc2 = b;
 
 	if (*pc1 < *pc2)
 		return -1;
@@ -59,14 +57,14 @@ hand_compare(const void *a, const void *b)
 }
 
 
-double Naomi[1000];
-double NaomiW[1000];
-double Ken[1000];
-double KenW[1000];
+uint32_t Naomi[1000];
+uint32_t NaomiW[1000];
+uint32_t Ken[1000];
+uint32_t KenW[1000];
 unsigned N;
 
 static int
-can_ken_beat(double val, double *khand, int start, unsigned lo, unsigned hi)
+can_ken_beat(uint32_t val, uint32_t *khand, int start, unsigned lo, unsigned hi)
 {
 	unsigned i = lo;
 
@@ -126,12 +124,14 @@ score_dw(void)
 
 	//printf("XXX dw: turns: %u/%u\n", turns, N);
 	while (turns < N) {
+		int previdx = -1;
 		while (turns < N && Naomi[namhi] > Ken[kenlo]) {
 			// Use one of ours to beat his lowest:
-			int idx = can_ken_beat(Ken[kenlo], Naomi, -1, namlo,
+			int idx = can_ken_beat(Ken[kenlo], Naomi, previdx, namlo,
 			    namhi);
 			// guaranteed by N[namhi] > Ken[kenlo]
 			ASSERT(idx >= 0);
+			previdx = idx;
 
 			nscr++;
 			//printf("XXX + (%f vs %f) N:%f(%u) K:%f(%u) (%u)\n",
@@ -241,10 +241,10 @@ main(void)
 
 		// Naomi's in KG
 		for (unsigned j = 0; j < N; j++)
-			SCANF("%lf", 1, &Naomi[j]);
+			SCANF("%f", 1, (float *)&Naomi[j]);
 		// Ken's in KG
 		for (unsigned j = 0; j < N; j++)
-			SCANF("%lf", 1, &Ken[j]);
+			SCANF("%f", 1, (float *)&Ken[j]);
 
 		do_case(i);
 	}
