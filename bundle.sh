@@ -21,7 +21,7 @@ for f in *.c ; do
     done
 done
         
-cmd="gcc -std=gnu99 -Wall -Wextra -O3 -g -o ${targetbin} ${target}"
+cmd="gcc -std=gnu99 -D_GNU_SOURCE -Wall -Wextra -O3 -g -o ${targetbin} ${target}"
 echo "$cmd"
 zsh -c "$cmd" || die "$cmd: error"
 
