@@ -144,19 +144,63 @@ determine_open_rect(unsigned r, unsigned c, unsigned area,
 	_min1 < _min2 ? _min1 : _min2; })
 
 static void
+do_sparse_colfirst(unsigned r, unsigned c, unsigned m)
+{
+
+	memset(mgrid[r-1], '.', sizeof(mgrid[0]));
+
+	//printf("XXX %s\n", __func__);
+
+	if (c > 2) {
+		unsigned nrow = min(m, r);
+
+		if (nrow == r - 1)
+			nrow--;
+
+		for (unsigned i = 0; i < nrow; i++)
+			mgrid[r-1-i][c-1] = '*';
+		m -= nrow;
+		m++;
+	}
+
+	ASSERT(m != c - 1);
+
+	for (unsigned i = 0; i < m; i++)
+		mgrid[r-1][c-1-i] = '*';
+
+	print_grid(r, c);
+}
+
+static void
 do_sparse(unsigned r, unsigned c, unsigned m)
 {
+	unsigned m_copy = m;
 
 	memset(mgrid, '.', r * sizeof(mgrid[0]));
 	mgrid[0][0] = 'c';
 
+	if (m == 0) {
+		print_grid(r, c);
+		return;
+	}
+
+	//printf("XXX %s\n", __func__);
+
 	if (r > 2) {
 		unsigned ncol = min(m, c);
+
+		if (ncol == c - 1)
+			ncol--;
 
 		for (unsigned i = 0; i < ncol; i++)
 			mgrid[r-1][c-1-i] = '*';
 		m -= ncol;
 		m++;
+	}
+
+	if (m == r - 1) {
+		do_sparse_colfirst(r, c, m_copy);
+		return;
 	}
 
 	for (unsigned i = 0; i < m; i++)
@@ -174,6 +218,13 @@ do_multi(unsigned r, unsigned c, unsigned m)
 	unsigned opens = r*c - m,
 		 or, oc;
 	bool sat;
+
+	if (m == 0) {
+		do_sparse(r, c, m);
+		return;
+	}
+
+	//printf("XXX %s\n", __func__);
 
 	ASSERT(opens >= 4);
 
@@ -243,7 +294,11 @@ do_case(unsigned cno, unsigned rows, unsigned cols, unsigned mines)
 		do_sparse(rows, cols, mines);
 	else if (mines < rows - 1 && cols > 2)
 		do_sparse(rows, cols, mines);
-	else if (mines <= rows + cols - 1 && (rows > 2 && cols > 2))
+	else if ((rows > 2 && cols > 2) && mines == rows + cols - 1)
+		do_sparse(rows, cols, mines);
+	else if ((rows > 2 && cols > 2) && mines == rows + cols - 3)
+		do_sparse(rows, cols, mines);
+	else if ((rows > 2 && cols > 2) && mines <= rows + cols - 5)
 		do_sparse(rows, cols, mines);
 	else if (mines <= rows*cols - 4)
 		do_multi(rows, cols, mines);
