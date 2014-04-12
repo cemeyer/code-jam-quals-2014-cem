@@ -63,6 +63,8 @@ uint32_t Ken[1000];
 uint32_t KenW[1000];
 unsigned N;
 
+uint64_t stat_scans, stat_scans_tot, n_tot;
+
 static int
 can_ken_beat(uint32_t val, uint32_t *khand, int start, unsigned lo, unsigned hi)
 {
@@ -71,9 +73,11 @@ can_ken_beat(uint32_t val, uint32_t *khand, int start, unsigned lo, unsigned hi)
 	if (start >= 0 && start >= (int)lo)
 		i = (unsigned)start;
 
-	for (; i <= hi; i++)
+	for (; i <= hi; i++) {
 		if (khand[i] > val)
 			return i;
+		stat_scans++;
+	}
 
 	return -1;
 }
@@ -169,8 +173,10 @@ score_dw(void)
 			break;
 
 		// find lowest non-discarded piece
-		while (Naomi[namlo] == 0.)
+		while (Naomi[namlo] == 0.) {
+			stat_scans++;
 			namlo++;
+		}
 
 		// XXX is this the optimal time to burn our lowest ??? probably
 		ASSERT(Naomi[namlo] < Ken[kenlo]);
@@ -206,6 +212,12 @@ do_case(unsigned cno)
 	DW = score_dw();
 
 	printf("Case #%u: %u %u\n", cno, DW, W);
+
+	if (stat_scans > 2*N)
+		printf("XXX: scanned: %ju(N:%u)\n", (uintmax_t)stat_scans, N);
+	stat_scans_tot += stat_scans;
+	stat_scans = 0;
+	n_tot += N;
 }
 
 
@@ -248,6 +260,9 @@ main(void)
 
 		do_case(i);
 	}
+
+	printf("XXX: scanned total: %ju/%ju\n", (uintmax_t)stat_scans_tot,
+	    (uintmax_t)n_tot);
 
 	return 0;
 }
