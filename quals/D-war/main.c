@@ -124,7 +124,7 @@ score_dw(void)
 		 namlo = 0, namhi = N-1,
 		 turns = 0;
 
-	printf("XXX dw: turns: %u/%u\n", turns, N);
+	//printf("XXX dw: turns: %u/%u\n", turns, N);
 	while (turns < N) {
 		while (turns < N && Naomi[namhi] > Ken[kenlo]) {
 			// Use one of ours to beat his lowest:
@@ -134,10 +134,10 @@ score_dw(void)
 			ASSERT(idx >= 0);
 
 			nscr++;
-			printf("XXX + (%f vs %f) N:%f(%u) K:%f(%u) (%u)\n",
-			    Naomi[(unsigned)idx], Ken[kenlo],
-			    Naomi[namhi], namhi,
-			    Ken[kenhi], kenhi, nscr);
+			//printf("XXX + (%f vs %f) N:%f(%u) K:%f(%u) (%u)\n",
+			//    Naomi[(unsigned)idx], Ken[kenlo],
+			//    Naomi[namhi], namhi,
+			//    Ken[kenhi], kenhi, nscr);
 
 			kenlo++;
 			Naomi[(unsigned)idx] = 0.;
@@ -147,7 +147,7 @@ score_dw(void)
 				namhi--;
 
 			turns++;
-			printf("XXX dw: turns: %u/%u\n", turns, N);
+			//printf("XXX dw: turns: %u/%u\n", turns, N);
 		}
 
 #if 0
@@ -174,16 +174,16 @@ score_dw(void)
 
 		// XXX is this the optimal time to burn our lowest ??? probably
 		ASSERT(Naomi[namlo] < Ken[kenlo]);
-		printf("XXX _ (%f vs %f) N:%f(%u) K:%f(%u) (%u)\n",
-		    Naomi[namlo], Ken[kenhi],
-		    Naomi[namhi], namhi,
-		    Ken[kenhi], kenhi, nscr);
+		//printf("XXX _ (%f vs %f) N:%f(%u) K:%f(%u) (%u)\n",
+		//    Naomi[namlo], Ken[kenhi],
+		//    Naomi[namhi], namhi,
+		//    Ken[kenhi], kenhi, nscr);
 
 		namlo++;
 		kenhi--;
 
 		turns++;
-		printf("XXX dw: turns: %u/%u\n", turns, N);
+		//printf("XXX dw: turns: %u/%u\n", turns, N);
 	}
 
 	return nscr;
@@ -237,7 +237,7 @@ main(void)
 	for (i = 1; i <= Tcases; i++) {
 
 		SCANF("%u", 1, &N);
-		printf("XXX N:%u\n", N);
+		//printf("XXX N:%u\n", N);
 
 		// Naomi's in KG
 		for (unsigned j = 0; j < N; j++)
