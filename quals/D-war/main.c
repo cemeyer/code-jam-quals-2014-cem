@@ -213,11 +213,11 @@ do_case(unsigned cno)
 
 	printf("Case #%u: %u %u\n", cno, DW, W);
 
-	if (stat_scans > 2*N)
-		printf("XXX: scanned: %ju(N:%u)\n", (uintmax_t)stat_scans, N);
-	stat_scans_tot += stat_scans;
-	stat_scans = 0;
-	n_tot += N;
+	//if (stat_scans > 2*N)
+	//	printf("XXX: scanned: %ju(N:%u)\n", (uintmax_t)stat_scans, N);
+	//stat_scans_tot += stat_scans;
+	//stat_scans = 0;
+	//n_tot += N;
 }
 
 
@@ -261,8 +261,8 @@ main(void)
 		do_case(i);
 	}
 
-	printf("XXX: scanned total: %ju/%ju\n", (uintmax_t)stat_scans_tot,
-	    (uintmax_t)n_tot);
+	//printf("XXX: scanned total: %ju/%ju\n", (uintmax_t)stat_scans_tot,
+	//    (uintmax_t)n_tot);
 
 	return 0;
 }
