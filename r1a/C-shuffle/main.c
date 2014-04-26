@@ -67,13 +67,32 @@ goodbad(void)
 	const unsigned firstseg = 350,
 	      sseg = 448, ssegmax = 881,
 	      tseg = 200, qseg = 100, fseg = 50,
-	      sseg2 = 570, ssegmax2 = 770;
+	      sseg2 = 570, ssegmax2 = 770,
+	      lregmax = 900;
 
 	unsigned i;
 	double lsum = 0., hsum = 0., tsum = 0.,
-	       qsum = 0., fsum = 0., hsum2 = 0.;
+	       qsum = 0., fsum = 0., hsum2 = 0.,
+	       avgy = 0., avgx = 0., btop = 0.,
+	       bdiv = 0., bet, alph;
 
 	unsigned metrics = 0;
+
+	// linear regression ...
+	//
+	for (i = 0; i < lregmax; i++) {
+		avgy += array[i];
+		avgx += i;
+	}
+	avgy /= lregmax;
+	avgx /= lregmax;
+
+	for (i = 0; i < lregmax; i++) {
+		btop += ((double)i - avgx) * ((double)array[i] - avgy);
+		bdiv += ((double)i - avgx) * ((double)i - avgx);
+	}
+	bet = btop/bdiv;
+	alph = avgy - bet * avgx;
 
 	for (i = 0; i < firstseg; i++) {
 		lsum += array[i];
@@ -108,31 +127,40 @@ goodbad(void)
 
 	hsum2 /= (ssegmax2 - sseg2);
 
-	if (fabs((lsum - 500.)/sqrt(1000.*1000/(12*firstseg))) >= 1.0)
+	if (fabs((lsum - 500.)/sqrt(1000.*1000/(12*firstseg))) >= 1.7)
 		metrics++;
-	if (fabs((hsum - 500.)/sqrt(1000.*1000/(12*(ssegmax-sseg )))) >= 1.645)
+	if (fabs((hsum - 500.)/sqrt(1000.*1000/(12*(ssegmax-sseg )))) >= 1.8)
 		metrics++;
-	if (fabs((tsum - 500.)/sqrt(1000.*1000/(12*tseg))) >= 1.645)
+	if (fabs((tsum - 500.)/sqrt(1000.*1000/(12*tseg))) >= 1.9)
 		metrics++;
-	if (fabs((qsum - 500.)/sqrt(1000.*1000/(12*qseg))) >= 1.645)
+	if (fabs((qsum - 500.)/sqrt(1000.*1000/(12*qseg))) >= 1.9)
 		metrics++;
-	if (fabs((fsum - 500.)/sqrt(1000.*1000/(12*fseg))) >= 1.645)
-		metrics++;
-
-	if ((hsum - lsum) > 24.)
+	if (fabs((fsum - 500.)/sqrt(1000.*1000/(12*fseg))) >= 2)
 		metrics++;
 
-	if ((hsum2 - tsum) > 41.)
+#if 0
+	if ((hsum - lsum) > 30.)
 		metrics++;
+
+	if ((hsum2 - tsum) > 50.)
+		metrics++;
+#endif
+
+	if (bet > 0.020)
+		metrics++;
+	if (bet > 0.030)
+		metrics += 2;
 
 	if (metrics >= 2)
 		return "BAD";
 
+#if 0
 	printf("xxx: 1 %f\n", fabs((lsum - 500.)/sqrt(1000.*1000/(12*firstseg))));
 	printf("xxx: 2 %f\n", fabs((hsum - 500.)/sqrt(1000.*1000/(12*(ssegmax-sseg )))));
 	printf("xxx: 3 %f\n", fabs((tsum - 500.)/sqrt(1000.*1000/(12*tseg))));
 	printf("xxx: 4 %f\n", fabs((qsum - 500.)/sqrt(1000.*1000/(12*qseg))));
 	printf("xxx: 5 %f\n", fabs((fsum - 500.)/sqrt(1000.*1000/(12*fseg))));
+#endif
 
 	return "GOOD";
 }
