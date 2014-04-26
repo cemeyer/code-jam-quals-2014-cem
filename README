@@ -1,0 +1,7 @@
+Wow, I did a bad job of Round 1A.
+
+Probably should have gone for exhaustive search points on A and B, but I didn't
+see good algorithms for either.
+
+For C, I immediately came up with a distribution bias... and then couldn't get
+my classifier accurate enough. :(
