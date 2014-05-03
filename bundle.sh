@@ -8,7 +8,7 @@ die() {
 targetbin="$(basename "$(pwd)")"
 rm -f "$targetbin"
         
-cmd="gcc -std=gnu99 -D_GNU_SOURCE -Wall -Wextra -O3 -g -o ${targetbin} *.c -lm"
+cmd="gcc -std=gnu99 -D_GNU_SOURCE -Wall -Wextra -O3 -g -o ${targetbin} *.c -lm -lbsd"
 echo "$cmd"
 zsh -c "$cmd" || die "$cmd: error"
 echo "============= Compile Passes ============="
