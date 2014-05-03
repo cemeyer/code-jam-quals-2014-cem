@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <inttypes.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -59,10 +60,6 @@ die(const char *fmt, ...)
 
 #if 0
 // qsort
-static int
-qsort_compare(const void *a, const void *b)
-{
-}
 
 // rb tree map
 struct item {
@@ -103,6 +100,19 @@ docase(um cno)
 }
 #endif
 
+static int
+uicmp(const void *a, const void *b)
+{
+	unsigned u1 = *(const unsigned *)a,
+		 u2 = *(const unsigned *)b;
+
+	if (u1 < u2)
+		return -1;
+	else if (u1 > u2)
+		return 1;
+	return 0;
+}
+
 struct rep {
 	char x;
 	unsigned cnt;
@@ -112,21 +122,57 @@ um Tcases, zz, N, ni;
 char line[120];
 struct rep rep[101 /*N*/][120 /*LEN*/];
 
+static unsigned
+adjustto(unsigned len, unsigned *cnts)
+{
+	unsigned tot = 0;
+	for (unsigned i = 1; i <= N; i++) {
+		tot += (unsigned)labs((long)cnts[i] - len);
+	}
+
+	return tot;
+}
+
 static um
 minsolve(int idx)
 {
-#if 0
+	bool equal = true;
+	unsigned cnts[101];
+
 	for (um i = 1; i <= N; i++) {
+		cnts[i] = rep[i][idx].cnt;
+
+		if (i == 1)
+			continue;
+
+		if (rep[i-1][idx].cnt != rep[i][idx].cnt)
+			equal = false;
 	}
-#endif
+	if (equal)
+		return 0;
+
+	// we know at least one pairwise inequality exists
+	qsort(&cnts[1], N, sizeof cnts[0], uicmp);
+
+	// for each possible N, count how many adjustments it takes; pick best
+	unsigned bestdist = UINT_MAX, d;
+	for (unsigned candlen = cnts[1]; candlen < cnts[N]; candlen++) {
+		d = adjustto(candlen, cnts);
+		if (d < bestdist)
+			bestdist = d;
+	}
+
+	return bestdist;
 
 	//ASSERT(N == 2);
-	return (unsigned)labs((long)rep[1][idx].cnt - (long)rep[2][idx].cnt);
+	//return (unsigned)labs((long)rep[1][idx].cnt - (long)rep[2][idx].cnt);
 }
 
 int
 main(void)
 {
+
+	//srandom(time(NULL));
 
 	SCANF("%ju", 1, &Tcases);
 
