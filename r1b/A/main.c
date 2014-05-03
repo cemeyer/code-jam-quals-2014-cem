@@ -156,7 +156,7 @@ minsolve(int idx)
 
 	// for each possible N, count how many adjustments it takes; pick best
 	unsigned bestdist = UINT_MAX, d;
-	for (unsigned candlen = cnts[1]; candlen < cnts[N]; candlen++) {
+	for (unsigned candlen = cnts[1]; candlen <= cnts[N]; candlen++) {
 		d = adjustto(candlen, cnts);
 		if (d < bestdist)
 			bestdist = d;
